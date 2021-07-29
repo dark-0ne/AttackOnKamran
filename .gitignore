@@ -10,7 +10,7 @@ pictures/
 *.tgz
 
 # Config files
-config.yaml
+#config.yaml
 
 # Python environments
 env/

@@ -23,6 +23,9 @@ async def start_a_tour(username):
     """
     # Retrieve a random active voice channel
     voice_channel = await retrieve_active_voice_channel()
+    if voice_channel is None:
+        print("Kamran not found in any channel. Hooray!")
+        return
 
     # Join the voice channel
     voice_client: discord.VoiceClient = await voice_channel.connect()
@@ -165,6 +168,7 @@ async def on_message(message):
 
         # Try to kick a user from a channel
         print("Triggered!")
+        await message.delete()
         await start_a_tour(message.content)
 
 

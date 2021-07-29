@@ -1,0 +1,65 @@
+# The Discord bot token
+bot_token: "ODcwMDcwMzU2Nzk3NDU2Mzk0.YQHaKg.hzhsX0yiAVjOEwWqi-qYXyUGRHA"
+
+# Trigger phrase (case-insensitive)
+#
+# If one of the users defined in allowed_command_user_ids says this phrase
+# exactly (case-insensitive), then the bot will activate
+#
+# If an empty string or not defined, triggering will be disabled
+trigger_phrase: "kamran"
+
+# Minimum amount of seconds to wait before kicking, after the trigger
+# command has been said. Defaults to 0
+trigger_sleep_min: 0
+# Maximum amount of seconds to wait before kicking, after the trigger
+# command has been said. Defaults to 0
+trigger_sleep_max: 0
+
+# The Discord User IDs that are allowed to run bot commands
+allowed_command_user_ids: 
+  - 204276658100764672
+  - 362730929686315008
+
+# The path to the audio clip to play before kicking a user
+kick_audio_clip_filepath: 
+  - "kamran1.mp3"
+  - "kamran2.mp3"
+  - "kamran3.mp3"
+  - "kamran4.mp3"
+
+laugh_audio_clip_filepath: "khande_kiri.mp3"
+
+# If the path to a folder of pictures is provided
+# The bot will send `picture_amount` pictures to a user after
+# kicking them
+picture_folder: ""
+picture_amount: 1
+
+# Random captions that could appear under each image sent
+# If none are specified, captions will not be added
+picture_captions: []
+
+# A list of messages to send to the user before the photos
+# If no messages are provided, none will be sent
+before_picture_messages: []
+
+# Amount of seconds to delay between sending each picture/caption combo
+# Defaults to 0
+between_picture_delay: 0
+
+# A list of messages to send to the user after the photos
+# If no messages are provided, none will be sent
+after_picture_messages: []
+
+# A list of user IDs that have a higher chance to get kicked
+#
+# List contains arrays of (user Discord ID, kick%)
+# kick_ratio is the % of how likely the user is to get kicked
+#
+# Example:
+# targeted_victims:
+#   - [1234567890, 0.5]
+#   - [0987654321, 0.1]
+targeted_victims: 
+  - [336082523010629632,0.75]
