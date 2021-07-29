@@ -74,19 +74,19 @@ async def start_a_tour(username):
     # Runs `after_play` when audio has finished playing
     members_to_kick = []
     members_in_channel = list(voice_channel.voice_states.keys())
-    print(members_in_channel)
+    audio_to_play = dead_audio_clip_filepath
     for victim_user_id, percentage in targeted_victims:
                 # Check that this user is currently in the voice channel
         if victim_user_id not in members_in_channel:
             continue
 
+        audio_to_play = laugh_audio_clip_filepath
         random_int = random.randint(0, 101)
         if random_int <= percentage * 100:
             print("found victim: {}".format(victim_user_id))
             members_to_kick.append(victim_user_id)
 
     
-    audio_to_play = laugh_audio_clip_filepath
     if len(members_to_kick) > 0:
         print("should play kick")
         audio_to_play = random.choice(kick_audio_clip_filepath)
@@ -197,5 +197,6 @@ allowed_command_user_ids = config["allowed_command_user_ids"]
 
 kick_audio_clip_filepath = config["kick_audio_clip_filepath"]
 laugh_audio_clip_filepath = config["laugh_audio_clip_filepath"]
+dead_audio_clip_filepath = config["dead_audio_clip_filepath"]
 
 bot.run(config["bot_token"])
