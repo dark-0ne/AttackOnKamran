@@ -20,3 +20,6 @@ venv/
 *.ogg
 *.opus
 *.wav
+
+# Log files
+*.log

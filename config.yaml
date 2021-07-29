@@ -1,6 +1,3 @@
-# The Discord bot token
-bot_token: "ODcwMDcwMzU2Nzk3NDU2Mzk0.YQHaKg.hzhsX0yiAVjOEwWqi-qYXyUGRHA"
-
 # Trigger phrase (case-insensitive)
 #
 # If one of the users defined in allowed_command_user_ids says this phrase
