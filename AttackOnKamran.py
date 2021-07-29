@@ -3,11 +3,14 @@ import random
 import discord
 import yaml
 import os
+from dotenv import load_dotenv
 
 from typing import Optional, List, Tuple
 
 # Conversion from sec to min
 MIN = 60
+
+load_dotenv() 
 
 intents = discord.Intents.default()
 intents.members = True
@@ -199,4 +202,4 @@ kick_audio_clip_filepath = config["kick_audio_clip_filepath"]
 laugh_audio_clip_filepath = config["laugh_audio_clip_filepath"]
 dead_audio_clip_filepath = config["dead_audio_clip_filepath"]
 
-bot.run(config["bot_token"])
+bot.run(os.environ.get("KAMRAN_TOKEN"))

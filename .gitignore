@@ -11,6 +11,7 @@ pictures/
 
 # Config files
 #config.yaml
+.env
 
 # Python environments
 env/
@@ -23,3 +24,4 @@ venv/
 
 # Log files
 *.log
+
