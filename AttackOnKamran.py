@@ -77,6 +77,7 @@ async def start_a_tour(username):
     # Runs `after_play` when audio has finished playing
     members_to_kick = []
     members_in_channel = list(voice_channel.voice_states.keys())
+
     audio_to_play = dead_audio_clip_filepath
     for victim_user_id, percentage in targeted_victims:
                 # Check that this user is currently in the voice channel
