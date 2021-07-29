@@ -1,0 +1,22 @@
+# IDE files
+.idea/
+.vscode/
+
+# Picture folder
+pics/
+pictures/
+
+# Archives
+*.tgz
+
+# Config files
+config.yaml
+
+# Python environments
+env/
+venv/
+
+# Audio filetypes
+*.ogg
+*.opus
+*.wav
