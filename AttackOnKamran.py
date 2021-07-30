@@ -4,6 +4,7 @@ import discord
 import yaml
 import os
 from dotenv import load_dotenv
+from pymongo import MongoClient
 
 from typing import Optional, List, Tuple
 
@@ -16,6 +17,11 @@ intents = discord.Intents.default()
 intents.members = True
 
 bot = discord.Client(intents=intents)
+
+# Connect to mongodb
+connection_string = "mongodb://AokBot:"+os.environ.get("MONGO_PWD")+"@localhost/AttackOnKamran"
+mongo_client = MongoClient(connection_string)
+database = mongo_client.AttackOnKamran
 
 
 async def start_a_tour(username):
@@ -50,11 +56,16 @@ async def start_a_tour(username):
         if len(members_to_kick) == 0:
             print("Kicking user {}".format(username))
             member_to_kick = voice_channel.guild.get_member_named(username)
+            result = database.stat.update_one({"username":username},{"$inc":{"deaths":1}})
+            print(result)
             await member_to_kick.edit(voice_channel=None)
         for victim_user_id in members_to_kick:
             member_to_kick = voice_channel.guild.get_member(victim_user_id)
-
             print("Kicking member '%s'..." % (member_to_kick,))
+            result = database.stat.update_one({"username":username},{"$inc":{"kills":1}})
+            print(result)
+            result = database.stat.update_one({"username":"kamran#8868"},{"$inc":{"deaths":1}})
+            print(result)
             await member_to_kick.edit(voice_channel=None)
 
         # Leave the channel
