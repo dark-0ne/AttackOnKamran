@@ -19,18 +19,13 @@ intents.members = True
 bot = discord.Client(intents=intents)
 
 # Connect to mongodb
-connection_string = "mongodb://AokBot:"+os.environ.get("MONGO_PWD")+"@localhost/AttackOnKamran"
+connection_string = "mongodb://AoKBot:"+os.environ.get("MONGO_PWD")+"@localhost"
 mongo_client = MongoClient(connection_string)
-database = mongo_client.AttackOnKamran
+database = mongo_client["AttackOnKamran"]
 
 
 async def start_a_tour(username):
-    """Starts a tour!
-
-    Joins an active voice channel, plays the clip, kicks a random user
-    and then leaves. Good job!
-    """
-    # Retrieve a random active voice channel
+    # Retrieve active voice channel
     voice_channel = await retrieve_kamran_channel()
     if voice_channel is None:
         print("Kamran not found in any channel. Hooray!")
@@ -40,47 +35,27 @@ async def start_a_tour(username):
     voice_client: discord.VoiceClient = await voice_channel.connect()
 
     async def kick_member_and_disconnect():
-        # Kick a random member
-        # Iterate through each of the victims and get their ID and
-        # kick percentage. Then, generate a number between 0-100.
-        # If that number is less than or equal to their kick
-        # percentage * 100, they get kicked.
-        #
-        # So if kick percentage is 0.2, multiply that by 100 to get 20.
-        # Then check if the random number is less than or equal to 20.
-        # If so, the user is kicked!
         if not kamran_found: 
-            print("Leaving voice channel")
             await voice_client.disconnect()
             return
+
         if len(members_to_kick) == 0:
-            print("Kicking user {}".format(username))
+            print("Punishing user {}".format(username))
             member_to_kick = voice_channel.guild.get_member_named(username)
-            result = database.stat.update_one({"username":username},{"$inc":{"deaths":1}})
-            print(result)
             await member_to_kick.edit(voice_channel=None)
+            database.stat.update_one({"username":username},{"$inc":{"deaths":1}},upsert=True)
+
         for victim_user_id in members_to_kick:
             member_to_kick = voice_channel.guild.get_member(victim_user_id)
             print("Kicking member '%s'..." % (member_to_kick,))
-            result = database.stat.update_one({"username":username},{"$inc":{"kills":1}})
-            print(result)
-            result = database.stat.update_one({"username":"kamran#8868"},{"$inc":{"deaths":1}})
-            print(result)
             await member_to_kick.edit(voice_channel=None)
+            database.stat.update_one({"username":username},{"$inc":{"kills":1}},upsert=True)
+            database.stat.update_one({"username":"kamran#8868"},{"$inc":{"deaths":1}},upsert=True)
 
         # Leave the channel
-        print("Leaving voice channel")
         await voice_client.disconnect()
 
         # Announce that the tour is beginning
-
-        # Send them some cool photos if we have any
-        if picture_folder:
-            await send_pictures_and_captions(member_to_kick)
-
-            for message in after_picture_messages:
-                print("Sending message to", member_to_kick.nick, message)
-                await member_to_kick.dm_channel.send(message)
 
     def after_play(e):
         # We have to hook into asyncio here as voice_client.play
@@ -113,51 +88,6 @@ async def start_a_tour(username):
         audio_to_play = random.choice(kick_audio_clip_filepath)
     print("playing audio: {}".format(audio_to_play))
     voice_client.play(discord.FFmpegPCMAudio(audio_to_play), after=after_play)
-
-
-async def send_pictures_and_captions(to_user: discord.Member):
-    """Send some photos from the configured picture folder with captions to the specified user
-
-    This method makes use of the `picture_folder`, `picture_amount` and
-    `picture_captions` config options
-    """
-    print("Sending photos to", to_user.nick)
-
-    # Pick some random photos to send
-    picture_filenames = random.sample(os.listdir(picture_folder), picture_amount)
-    picture_filepaths = [os.path.join(picture_folder, filename) for filename in picture_filenames]
-
-    picture_caption_choices = []
-    if picture_captions:
-        picture_caption_choices = random.sample(picture_captions, len(picture_filepaths))
-
-    discord_files = []
-    for filepath in picture_filepaths:
-        discord_files.append(discord.File(filepath))
-
-    if to_user.dm_channel is None:
-        await to_user.create_dm()
-
-    for message in before_picture_messages:
-        print("Sending messages:", before_picture_messages)
-        await to_user.dm_channel.send(message)
-
-    for index, file in enumerate(discord_files):
-        # Send the image
-        print("Sending photo", file.filename)
-        await to_user.dm_channel.send(file=file)
-
-        # Optionally, send a random caption
-        if picture_captions:
-            caption = picture_caption_choices[index]
-            print("Sending caption:", caption)
-            await to_user.dm_channel.send(caption)
-
-        # Optionally delay between sending each image
-        # Don't delay after sending the last image
-        if index != len(discord_files) - 1:
-            await asyncio.sleep(between_picture_delay)
-
 
 async def retrieve_kamran_channel():
     """Scans all active voice channels the bot can see and returns a random one"""
@@ -195,9 +125,6 @@ async def retrieve_caller_channel(username):
                 if  username in members_in_channel:
                     print("Found active channel")
                     return channel
-
-
-
 
 
 # Text command to have bot join channel
