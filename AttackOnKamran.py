@@ -25,10 +25,10 @@ async def start_a_tour(username):
     and then leaves. Good job!
     """
     # Retrieve a random active voice channel
-    voice_channel = await retrieve_active_voice_channel()
+    voice_channel = await retrieve_kamran_channel()
     if voice_channel is None:
         print("Kamran not found in any channel. Hooray!")
-        return
+        voice_channel = await retrieve_caller_channel(username.split('#')[0])
 
     # Join the voice channel
     voice_client: discord.VoiceClient = await voice_channel.connect()
@@ -43,6 +43,10 @@ async def start_a_tour(username):
         # So if kick percentage is 0.2, multiply that by 100 to get 20.
         # Then check if the random number is less than or equal to 20.
         # If so, the user is kicked!
+        if not kamran_found: 
+            print("Leaving voice channel")
+            await voice_client.disconnect()
+            return
         if len(members_to_kick) == 0:
             print("Kicking user {}".format(username))
             member_to_kick = voice_channel.guild.get_member_named(username)
@@ -76,6 +80,7 @@ async def start_a_tour(username):
     # Play the audio
     # Runs `after_play` when audio has finished playing
     members_to_kick = []
+    kamran_found = False
     members_in_channel = list(voice_channel.voice_states.keys())
 
     audio_to_play = dead_audio_clip_filepath
@@ -85,6 +90,7 @@ async def start_a_tour(username):
             continue
 
         audio_to_play = laugh_audio_clip_filepath
+        kamran_found = True
         random_int = random.randint(0, 101)
         if random_int <= percentage * 100:
             print("found victim: {}".format(victim_user_id))
@@ -142,7 +148,7 @@ async def send_pictures_and_captions(to_user: discord.Member):
             await asyncio.sleep(between_picture_delay)
 
 
-async def retrieve_active_voice_channel():
+async def retrieve_kamran_channel():
     """Scans all active voice channels the bot can see and returns a random one"""
     # Get all channels the bot can see
     channels = [c for c in bot.get_all_channels()]
@@ -159,6 +165,27 @@ async def retrieve_active_voice_channel():
                     if  victim_user_id in members_in_channel:
                         print("Found active channel")
                         return channel
+
+async def retrieve_caller_channel(username):
+    """Scans all active voice channels the bot can see and returns a random one"""
+    # Get all channels the bot can see
+    channels = [c for c in bot.get_all_channels()]
+
+    # Randomize them so we don't pick the same channel every time
+    random.shuffle(channels)
+
+    # Check if each channel is a VoiceChannel with active members
+    for channel in channels:
+        if isinstance(channel, discord.VoiceChannel):
+            if len(channel.members) > 0:
+                members_in_channel = [user.name for user in channel.members]
+                print(members_in_channel)
+                print(username)
+                if  username in members_in_channel:
+                    print("Found active channel")
+                    return channel
+
+
 
 
 
