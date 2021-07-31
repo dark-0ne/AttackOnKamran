@@ -127,6 +127,21 @@ async def retrieve_caller_channel(username):
                     return channel
 
 
+async def show_leaderboard(message):
+    result = database.stat.find()
+    total_kills = 0
+    total_deaths = 0
+    for item in result:
+        if item["username"] != "kamran#8868":
+            total_kills += item["kills"]
+            total_deaths += item["deaths"]
+
+            
+    message_to_send = "In our battle to save humanity, we have slain Kamran {} times, and {} of our comrades have fallen to his evil!".format(total_kills,total_deaths)
+    await message.channel.send(message_to_send)
+
+
+
 # Text command to have bot join channel
 @bot.event
 async def on_message(message):
@@ -139,6 +154,15 @@ async def on_message(message):
         print("Triggered!")
         await message.delete()
         await start_a_tour(message.content)
+    if message.channel.name == "bot-commands":
+        if message.content == "!leaderboard":
+            print("showing leaderboard")
+            await show_leaderboard(message)
+        if message.content == "!kamran":
+            print("calling shit")
+            await start_a_tour(message.author.name)
+
+
 
 
 @bot.event
