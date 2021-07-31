@@ -133,8 +133,14 @@ async def show_leaderboard(message):
     total_deaths = 0
     for item in result:
         if item["username"] != "kamran#8868":
-            total_kills += item["kills"]
-            total_deaths += item["deaths"]
+            try:
+                total_kills += item["kills"]
+            except KeyError:
+                pass
+            try:
+                total_deaths += item["deaths"]
+            except KeyError:
+                pass
 
             
     message_to_send = "In our battle to save humanity, we have slain Kamran {} times, and {} of our comrades have fallen to his evil!".format(total_kills,total_deaths)
