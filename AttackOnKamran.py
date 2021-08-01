@@ -154,11 +154,11 @@ async def show_leaderboard(message):
 
             user_kd[item['username']] = (user_kills, user_deaths)
 
-    message_to_send = "```In our battle to save humanity, we have slain Kamran {} times, and {} of our comrades have fallen to his evil!\n\n Most exterminations have been achieved by: \n\n".format(
+    message_to_send = "```\nIn our battle to save humanity, we have slain Kamran {} times, and {} of our comrades have fallen to his evil!\n\nMost exterminations have been achieved by:\n\n".format(
         total_kills, total_deaths)
-    top_killers = sorted(user_kd, key=lambda x: user_kd[x][0])
-    top_deaths = sorted(user_kd, key=lambda x: user_kd[x][1])
-    top_kd = sorted(user_kd, key=lambda x: user_kd[x][0]/user_kd[x][1])
+    top_killers = sorted(user_kd, key=lambda x: user_kd[x][0],reverse=True)
+    top_deaths = sorted(user_kd, key=lambda x: user_kd[x][1],reverse=True)
+    top_kd = sorted(user_kd, key=lambda x: user_kd[x][0]/(user_kd[x][1]+1),reverse=True)
 
     for user in top_killers[:3]:
         message_to_send += "{}: {}\n".format(user,user_kd[user][0])
@@ -169,8 +169,12 @@ async def show_leaderboard(message):
 
     message_to_send += "\nHighest K/D Ratio: \n\n"
     for user in top_kd[:3]:
-        message_to_send += "{}: {%.2f}\n".format(user,user_kd[user][0]/user_kd[user][1])
+        try:
+            message_to_send += "{}: {:.2f}\n".format(user,user_kd[user][0]/user_kd[user][1])
+        except ZeroDivisionError:
+            message_to_send += "{}: **Immortal**\n".format(user)
 
+    message_to_send += "```"
     await message.channel.send(message_to_send)
 
 
@@ -191,9 +195,10 @@ async def on_message(message):
         if message.content == "!leaderboard":
             print("showing leaderboard")
             await show_leaderboard(message)
+
         if message.content == "!kamran":
             print("calling shit")
-            await start_a_tour(message.author.name)
+            await start_a_tour(message.author.name+"#"+message.author.discriminator)
 
 
 @bot.event
