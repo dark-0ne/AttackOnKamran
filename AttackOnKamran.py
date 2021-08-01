@@ -92,6 +92,7 @@ async def find_and_exterminate_kamran(caller) -> bool:
     # Runs `after_play` when audio has finished playing
     print("playing audio: {}".format(audio_to_play))
     voice_client.play(discord.FFmpegPCMAudio(audio_to_play), after=after_play)
+    return True
 
 
 async def celebrate(caller) -> None:
@@ -116,12 +117,12 @@ async def celebrate(caller) -> None:
                       after=voice_client.disconnect)
 
 
-async def retrieve_kamran_channel() -> discord.Channel:
+async def retrieve_kamran_channel() -> discord.VoiceChannel:
     """
     Retrieves the voice channel kamran is in
 
     Returns:
-        channel (discord.Channel): Channel that kamran is in, will return None if kamran not found
+        channel (discord.VoiceChannel): Channel that kamran is in, will return None if kamran not found
     """
     channels = [c for c in bot.get_all_channels()]
 
@@ -134,7 +135,7 @@ async def retrieve_kamran_channel() -> discord.Channel:
                 return channel
 
 
-async def retrieve_caller_channel(caller) -> discord.Channel:
+async def retrieve_caller_channel(caller) -> discord.VoiceChannel:
     """
     Retrieves the voice channel caller is in
 
@@ -142,7 +143,7 @@ async def retrieve_caller_channel(caller) -> discord.Channel:
         caller (discord.User): User object for caller
 
     Returns:
-        channel (discord.Channel): Channel that kamran is in, will return None if caller not found
+        channel (discord.VoiceChannel): Channel that kamran is in, will return None if caller not found
     """
     channels = [c for c in bot.get_all_channels()]
 
@@ -160,7 +161,7 @@ async def show_leaderboard(target_channel) -> None:
     Send a message containing leaderboard to a target channel
 
     Args:
-        target_channel (discord.Channel): Channel object which bot should send the message to 
+        target_channel (discord.TextChannel): Channel object which bot should send the message to 
     
     Returns:
         None
@@ -230,7 +231,7 @@ async def show_stats(user,target_channel)->None:
 
     Args:
         caller (discord.User): User object whom to show stats for 
-        target_channel (discord.Channel): Channel object which bot should send the message to 
+        target_channel (discord.TextChannel): Channel object which bot should send the message to 
     
     Returns: 
         None
@@ -278,7 +279,7 @@ async def on_message(message):
             print("calling exterminate")
             result = await find_and_exterminate_kamran(message.author)
             if not result:
-                await celebrate()
+                await celebrate(message.author)
 
 
 @bot.event
