@@ -1,25 +1,5 @@
-# Trigger phrase (case-insensitive)
-#
-# If one of the users defined in allowed_command_user_ids says this phrase
-# exactly (case-insensitive), then the bot will activate
-#
-# If an empty string or not defined, triggering will be disabled
-trigger_phrase: "kamran"
-
-# Minimum amount of seconds to wait before kicking, after the trigger
-# command has been said. Defaults to 0
-trigger_sleep_min: 0
-# Maximum amount of seconds to wait before kicking, after the trigger
-# command has been said. Defaults to 0
-trigger_sleep_max: 0
-
-# The Discord User IDs that are allowed to run bot commands
-allowed_command_user_ids: 
-  - 204276658100764672
-  - 362730929686315008
-
-# The path to the audio clip to play before kicking a user
-kick_audio_clip_filepath: 
+# File names for when kamran is kicked
+kick_kamran_audio_files:
   - "kamran1.mp3"
   - "kamran2.mp3"
   - "kamran3.mp3"
@@ -27,40 +7,17 @@ kick_audio_clip_filepath:
   - "kamran5.mp3"
   - "kamran6.mp3"
 
-laugh_audio_clip_filepath: "khande_kiri.mp3"
-dead_audio_clip_filepath: "dead.mp3"
+# File names for when caller is kicked
+kick_caller_audio_file: "khande_kiri.mp3"
 
+# File names for when kamran is not in channel
+celebration_audio_file: "dead.mp3"
 
-# If the path to a folder of pictures is provided
-# The bot will send `picture_amount` pictures to a user after
-# kicking them
-picture_folder: ""
-picture_amount: 1
+# Kamran's unique id
+kamran_uid: 336082523010629632
 
-# Random captions that could appear under each image sent
-# If none are specified, captions will not be added
-picture_captions: []
+# Chance to kick kamran (between 0 and 1)
+kamran_kick_chance: 0.8
 
-# A list of messages to send to the user before the photos
-# If no messages are provided, none will be sent
-before_picture_messages: []
-
-# Amount of seconds to delay between sending each picture/caption combo
-# Defaults to 0
-between_picture_delay: 0
-
-# A list of messages to send to the user after the photos
-# If no messages are provided, none will be sent
-after_picture_messages: []
-
-# A list of user IDs that have a higher chance to get kicked
-#
-# List contains arrays of (user Discord ID, kick%)
-# kick_ratio is the % of how likely the user is to get kicked
-#
-# Example:
-# targeted_victims:
-#   - [1234567890, 0.5]
-#   - [0987654321, 0.1]
-targeted_victims: 
-  - [336082523010629632,0.8]
+# Name of the channel bot will listen to commands and send responses
+bot-commands_channel: "bot-commands"
