@@ -154,29 +154,42 @@ async def show_leaderboard(message):
 
             user_kd[item['username']] = (user_kills, user_deaths)
 
-    message_to_send = "```\nIn our battle to save humanity, we have slain Kamran {} times, and {} of our comrades have fallen to his evil!\n\nMost exterminations have been achieved by:\n\n".format(
+    message_to_send = "⠀\nIn our battle to save humanity, we have slain Kamran {} times, and {} of our comrades have fallen to his evil!\n\nMost exterminations have been achieved by:\n".format(
         total_kills, total_deaths)
     top_killers = sorted(user_kd, key=lambda x: user_kd[x][0],reverse=True)
     top_deaths = sorted(user_kd, key=lambda x: user_kd[x][1],reverse=True)
     top_kd = sorted(user_kd, key=lambda x: user_kd[x][0]/(user_kd[x][1]+1),reverse=True)
 
     for user in top_killers[:3]:
-        message_to_send += "{}: {}\n".format(user,user_kd[user][0])
+        message_to_send += "\t\t-- **{}**: {}\n".format(user.split("#")[0],user_kd[user][0])
 
-    message_to_send += "\nMost sacrifices have been made by: \n\n"
+    message_to_send += "\nMost sacrifices have been made by: \n"
     for user in top_deaths[:3]:
-        message_to_send += "{}: {}\n".format(user,user_kd[user][1])
+        message_to_send += "\t\t-- *{}*: {}\n".format(user.split("#")[0],user_kd[user][1])
 
-    message_to_send += "\nHighest K/D Ratio: \n\n"
+    message_to_send += "\nHighest K/D Ratio: \n"
     for user in top_kd[:3]:
         try:
-            message_to_send += "{}: {:.2f}\n".format(user,user_kd[user][0]/user_kd[user][1])
+            message_to_send += "\t\t-- {}: {:.2f}\n".format(user.split("#")[0],user_kd[user][0]/user_kd[user][1])
         except ZeroDivisionError:
-            message_to_send += "{}: **Immortal**\n".format(user)
+            message_to_send += "\t\t-- ***{}: Immortal***\n".format(user.split("#")[0])
 
-    message_to_send += "```"
+    message_to_send += ""
     await message.channel.send(message_to_send)
 
+async def show_stats(message):
+    result = database.stat.find_one({"username":message.author.name+"#"+message.author.discriminator})
+    if "kills" not in result:
+        result["kills"] = 0
+    if "deaths" not in result:
+        result["deaths"] = 0
+
+    try:
+        message_to_send = "⠀\nYou have slain Kamran **{}** times, and sacrificed yourself *{}* times. Your K/D ratio is {:.2f}. Keep up the good work!".format(result['kills'],result['deaths'],result['kills']/result['deaths'])
+    except ZeroDivisionError:
+        message_to_send = "⠀\nYou have slain Kamran **{}** times, and sacrificed yourself *{}* times. You are ***Immortal***, so keep up the good work!".format(result['kills'],result['deaths'])
+
+    await message.channel.send(message_to_send)
 
 # Text command to have bot join channel
 @bot.event
@@ -192,9 +205,13 @@ async def on_message(message):
         await message.delete()
         await start_a_tour(message.content)
     if message.channel.name == "bot-commands":
-        if message.content == "!leaderboard":
+        if message.content == "!leaderboard" or message.content =="!leaderboards":
             print("showing leaderboard")
             await show_leaderboard(message)
+
+        if message.content == "!stats" or message.content=="!stat":
+            print("showing stats")
+            await show_stats(message)
 
         if message.content == "!kamran":
             print("calling shit")
