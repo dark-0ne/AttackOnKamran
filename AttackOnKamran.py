@@ -3,6 +3,7 @@ import random
 import discord
 import yaml
 import os
+import operator
 from dotenv import load_dotenv
 from pymongo import MongoClient
 
@@ -11,7 +12,7 @@ from typing import Optional, List, Tuple
 # Conversion from sec to min
 MIN = 60
 
-load_dotenv() 
+load_dotenv()
 
 intents = discord.Intents.default()
 intents.members = True
@@ -19,7 +20,8 @@ intents.members = True
 bot = discord.Client(intents=intents)
 
 # Connect to mongodb
-connection_string = "mongodb://AoKBot:"+os.environ.get("MONGO_PWD")+"@localhost"
+connection_string = "mongodb://AoKBot:" + \
+    os.environ.get("MONGO_PWD")+"@localhost"
 mongo_client = MongoClient(connection_string)
 database = mongo_client["AttackOnKamran"]
 
@@ -35,7 +37,7 @@ async def start_a_tour(username):
     voice_client: discord.VoiceClient = await voice_channel.connect()
 
     async def kick_member_and_disconnect():
-        if not kamran_found: 
+        if not kamran_found:
             await voice_client.disconnect()
             return
 
@@ -43,14 +45,17 @@ async def start_a_tour(username):
             print("Punishing user {}".format(username))
             member_to_kick = voice_channel.guild.get_member_named(username)
             await member_to_kick.edit(voice_channel=None)
-            database.stat.update_one({"username":username},{"$inc":{"deaths":1}},upsert=True)
+            database.stat.update_one({"username": username}, {
+                                     "$inc": {"deaths": 1}}, upsert=True)
 
         for victim_user_id in members_to_kick:
             member_to_kick = voice_channel.guild.get_member(victim_user_id)
             print("Kicking member '%s'..." % (member_to_kick,))
             await member_to_kick.edit(voice_channel=None)
-            database.stat.update_one({"username":username},{"$inc":{"kills":1}},upsert=True)
-            database.stat.update_one({"username":"kamran#8868"},{"$inc":{"deaths":1}},upsert=True)
+            database.stat.update_one({"username": username}, {
+                                     "$inc": {"kills": 1}}, upsert=True)
+            database.stat.update_one({"username": "kamran#8868"}, {
+                                     "$inc": {"deaths": 1}}, upsert=True)
 
         # Leave the channel
         await voice_client.disconnect()
@@ -61,7 +66,8 @@ async def start_a_tour(username):
         # We have to hook into asyncio here as voice_client.play
         # runs the Callable it's given without await'ing it
         # Basically this just calls `kick_member_and_disconnect`
-        asyncio.run_coroutine_threadsafe(kick_member_and_disconnect(), bot.loop)
+        asyncio.run_coroutine_threadsafe(
+            kick_member_and_disconnect(), bot.loop)
 
     # Play the audio
     # Runs `after_play` when audio has finished playing
@@ -71,7 +77,7 @@ async def start_a_tour(username):
 
     audio_to_play = dead_audio_clip_filepath
     for victim_user_id, percentage in targeted_victims:
-                # Check that this user is currently in the voice channel
+        # Check that this user is currently in the voice channel
         if victim_user_id not in members_in_channel:
             continue
 
@@ -82,12 +88,12 @@ async def start_a_tour(username):
             print("found victim: {}".format(victim_user_id))
             members_to_kick.append(victim_user_id)
 
-    
     if len(members_to_kick) > 0:
         print("should play kick")
         audio_to_play = random.choice(kick_audio_clip_filepath)
     print("playing audio: {}".format(audio_to_play))
     voice_client.play(discord.FFmpegPCMAudio(audio_to_play), after=after_play)
+
 
 async def retrieve_kamran_channel():
     """Scans all active voice channels the bot can see and returns a random one"""
@@ -103,9 +109,10 @@ async def retrieve_kamran_channel():
             if len(channel.members) > 0:
                 members_in_channel = list(channel.voice_states.keys())
                 for victim_user_id, percentage in targeted_victims:
-                    if  victim_user_id in members_in_channel:
+                    if victim_user_id in members_in_channel:
                         print("Found active channel")
                         return channel
+
 
 async def retrieve_caller_channel(username):
     """Scans all active voice channels the bot can see and returns a random one"""
@@ -122,7 +129,7 @@ async def retrieve_caller_channel(username):
                 members_in_channel = [user.name for user in channel.members]
                 print(members_in_channel)
                 print(username)
-                if  username in members_in_channel:
+                if username in members_in_channel:
                     print("Found active channel")
                     return channel
 
@@ -131,21 +138,40 @@ async def show_leaderboard(message):
     result = database.stat.find()
     total_kills = 0
     total_deaths = 0
+    user_kd = {}
     for item in result:
         if item["username"] != "kamran#8868":
             try:
-                total_kills += item["kills"]
+                user_kills = item["kills"]
+                total_kills += user_kills
             except KeyError:
-                pass
+                user_kills = 0
             try:
-                total_deaths += item["deaths"]
+                user_deaths = item["deaths"]
+                total_deaths += user_deaths
             except KeyError:
-                pass
+                user_deaths = 0
 
-            
-    message_to_send = "In our battle to save humanity, we have slain Kamran {} times, and {} of our comrades have fallen to his evil!".format(total_kills,total_deaths)
+            user_kd[item['username']] = (user_kills, user_deaths)
+
+    message_to_send = "```In our battle to save humanity, we have slain Kamran {} times, and {} of our comrades have fallen to his evil!\n\n Most exterminations have been achieved by: \n\n".format(
+        total_kills, total_deaths)
+    top_killers = sorted(user_kd, key=lambda x: user_kd[x][0])
+    top_deaths = sorted(user_kd, key=lambda x: user_kd[x][1])
+    top_kd = sorted(user_kd, key=lambda x: user_kd[x][0]/user_kd[x][1])
+
+    for user in top_killers[:3]:
+        message_to_send += "{}: {}\n".format(user,user_kd[user][0])
+
+    message_to_send += "\nMost sacrifices have been made by: \n\n"
+    for user in top_deaths[:3]:
+        message_to_send += "{}: {}\n".format(user,user_kd[user][1])
+
+    message_to_send += "\nHighest K/D Ratio: \n\n"
+    for user in top_kd[:3]:
+        message_to_send += "{}: {%.2f}\n".format(user,user_kd[user][0]/user_kd[user][1])
+
     await message.channel.send(message_to_send)
-
 
 
 # Text command to have bot join channel
@@ -153,7 +179,8 @@ async def show_leaderboard(message):
 async def on_message(message):
     if message.channel.name == "bot-webhook":
         sleep_amount = random.randint(trigger_sleep_min, trigger_sleep_max)
-        print("Trigger phrase ACTIVATED! Waiting %d seconds..." % (sleep_amount,))
+        print("Trigger phrase ACTIVATED! Waiting %d seconds..." %
+              (sleep_amount,))
         await asyncio.sleep(sleep_amount)
 
         # Try to kick a user from a channel
@@ -167,8 +194,6 @@ async def on_message(message):
         if message.content == "!kamran":
             print("calling shit")
             await start_a_tour(message.author.name)
-
-
 
 
 @bot.event
