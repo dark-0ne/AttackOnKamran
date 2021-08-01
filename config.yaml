@@ -24,6 +24,8 @@ kick_audio_clip_filepath:
   - "kamran2.mp3"
   - "kamran3.mp3"
   - "kamran4.mp3"
+  - "kamran5.mp3"
+  - "kamran6.mp3"
 
 laugh_audio_clip_filepath: "khande_kiri.mp3"
 dead_audio_clip_filepath: "dead.mp3"
