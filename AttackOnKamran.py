@@ -122,7 +122,13 @@ async def celebrate(caller) -> None:
     Returns:
         None
     """
+    async def disconnect() -> None:
+        logging.info("Leaving %s",voice_channel.name)
+        await voice_client.disconnect()
 
+    def after_play(e):
+        asyncio.run_coroutine_threadsafe(
+            disconnect(), bot.loop)
     # Retrieve caller channel
     voice_channel = await retrieve_caller_channel(caller)
 
@@ -134,7 +140,7 @@ async def celebrate(caller) -> None:
     # Play the audio, and disconnect from channel after it's over
     logging.info("Playing audio: %s",audio_to_play)
     voice_client.play(discord.FFmpegPCMAudio(audio_to_play),
-                      after=voice_client.disconnect)
+            after=after_play)
 
 
 async def retrieve_kamran_channel() -> discord.VoiceChannel:
