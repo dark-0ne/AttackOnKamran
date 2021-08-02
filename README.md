@@ -33,4 +33,4 @@ In the end, here are some quotes in case you need a bit of encouragement in the 
 
 > Make no mistake; humanity is on the verge of extinction, and the only hope we have lies in Kamran's annihilation. __-Captain Levi__
 
-> Luftwaffe may bomb our cities to the dust, Kriegsmarine may sink our navy to the depths of the North Sea, Wehrmacht may march into London and we may all be enslaved by the Nazi Empire; but that is still less dreadful a fate than living in a future with Kamran. __-Winston Churchill__
+> Luftwaffe may bomb our cities to the dust, Kriegsmarine may sink our navy to the depths of the North Sea, Wehrmacht may march into London and we may all be enslaved by the Nazi Empire; but that is still less dreadful a fate than living in a world with Kamran. __-Winston Churchill__
