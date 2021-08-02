@@ -22,3 +22,9 @@ kamran_kick_chance: 0.8
 
 # Name of the channel bot will listen to commands and send responses
 bot-commands-channel: "bot-commands"
+
+# MongoDB configs
+# Password should be put in .env file
+mongo-address: "localhost"
+mongo-username: "AoKBot"
+mongo-db-name: "AttackOnKamran"

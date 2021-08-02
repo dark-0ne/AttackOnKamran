@@ -8,31 +8,12 @@ import logging
 from dotenv import load_dotenv
 from pymongo import MongoClient
 
-# Load environment variables from .env file
-load_dotenv()
-
-# Setup logging
-# TODO: different logging levels and formattings for each handler
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s",
-    handlers=[
-        logging.FileHandler("info.log"),
-        logging.StreamHandler()
-    ]
-)
 
 # Have to set intents so bot can see users in voice channels
 intents = discord.Intents.default()
 intents.members = True
 
 bot = discord.Client(intents=intents)
-
-# Connect to mongodb, will read db password from env variable
-connection_string = "mongodb://AoKBot:" + \
-    os.environ.get("MONGO_PWD")+"@localhost"
-mongo_client = MongoClient(connection_string)
-database = mongo_client["AttackOnKamran"]
 
 
 async def find_and_exterminate_kamran(caller) -> bool:
@@ -324,6 +305,20 @@ async def on_message(message):
 async def on_ready():
     logging.info("Connected and logged in. Death to Kamran!")
 
+# Setup logging
+# TODO: different logging levels and formattings for each handler
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    handlers=[
+        logging.FileHandler("info.log"),
+        logging.StreamHandler()
+    ]
+)
+
+# Load environment variables from .env file
+load_dotenv()
+
 # Read the config file and store it in a python dictionary
 with open("config.yaml") as f:
     config = yaml.safe_load(f.read())
@@ -336,6 +331,16 @@ kamran_uid = config["kamran_uid"]
 kamran_kick_chance = config["kamran_kick_chance"]
 
 bot_commands_channel = config["bot-commands-channel"]
+
+mongo_address = config["mongo-address"]
+mongo_username = config["mongo-username"]
+mongo_db_name = config["mongo-db-name"]
+
+# Connect to mongodb, will read db password from env variable
+connection_string = "mongodb://" + mongo_username + ":" + \
+    os.environ.get("MONGO_PWD")+"@"+mongo_address
+mongo_client = MongoClient(connection_string)
+database = mongo_client[mongo_db_name]
 
 # Run the bot with token read from env variable
 bot.run(os.environ.get("KAMRAN_TOKEN"))
