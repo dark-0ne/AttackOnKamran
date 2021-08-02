@@ -4,6 +4,7 @@ import discord
 import yaml
 import os
 import logging
+import csv
 
 from dotenv import load_dotenv
 from pymongo import MongoClient
@@ -275,6 +276,26 @@ async def show_stats(user,target_channel)->None:
 
     await target_channel.send(message_to_send)
 
+async def show_quote(target_channel)->None:
+    """
+    Send a message containing a quote
+
+    Quotes are read from quote.yaml file
+
+    Args:
+        target_channel (discord.TextChannel): Channel object which bot should send the message to 
+    
+    Returns: 
+        None
+    """
+
+    # Get a random quote from quotes list
+    quote, quotee = random.choice(quotes)
+
+    # Construct and format message
+    message_to_send = "⠀\n" + quote + " *-" + quotee + "*"
+
+    await target_channel.send(message_to_send)
 
 @bot.event
 async def on_message(message):
@@ -299,6 +320,9 @@ async def on_message(message):
             if not result:
                 logging.info("Kamran was not found in any channels; calling celebrate")
                 await celebrate(message.author)
+        if message.content == "!quote":
+            logging.info("%s called !quote in %s",message.author.name,message.channel.name)
+            await show_quote(message.channel)
 
 
 @bot.event
@@ -335,6 +359,13 @@ bot_commands_channel = config["bot-commands-channel"]
 mongo_address = config["mongo-address"]
 mongo_username = config["mongo-username"]
 mongo_db_name = config["mongo-db-name"]
+
+# Read quotes from csv file
+quotes = []
+with open("quote.csv") as f:
+    csv_reader = csv.reader(f, delimiter=',')
+    for row in csv_reader:
+        quotes.append(row)
 
 # Connect to mongodb, will read db password from env variable
 connection_string = "mongodb://" + mongo_username + ":" + \
