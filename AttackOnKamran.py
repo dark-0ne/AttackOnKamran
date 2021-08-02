@@ -322,7 +322,7 @@ async def on_message(message):
 
 @bot.event
 async def on_ready():
-    logging.info("Connected and logged in. Here I come!")
+    logging.info("Connected and logged in. Death to Kamran!")
 
 # Read the config file and store it in a python dictionary
 with open("config.yaml") as f:
