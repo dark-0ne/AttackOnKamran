@@ -76,6 +76,7 @@ async def find_and_exterminate_kamran(caller) -> bool:
 
     # Determine if kamran is getting kicked or not
     random_int = random.randint(0, 101)
+    print("random number is {}".format(random_int))
 
     if random_int <= kamran_kick_chance * 100:
         print("Should kick kamran")
@@ -264,11 +265,11 @@ async def on_message(message):
     if message.channel.name == bot_commands_channel:
         if message.content == "!leaderboard" or message.content == "!leaderboards":
             print("showing leaderboard")
-            await show_leaderboard(message)
+            await show_leaderboard(message.channel)
 
         if message.content == "!stats" or message.content == "!stat":
             print("showing stats")
-            await show_stats(message)
+            await show_stats(message.author,message.channel)
 
         if message.content == "!kamran":
             caller_channel = await retrieve_caller_channel(message.author)
