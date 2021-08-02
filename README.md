@@ -4,10 +4,10 @@
 </p>
 
 ## What is this?
-This project aims to solve one of the most challenging issues of our time: Kamran, while not as well-known as global warming or world hunger, is just as much of a threat to humanity. Therefore, we saw it as our duty to do everything in our power in order to put an end to this menace.
+This project aims to solve one of the most challenging issues of our time: Kamran, while not as well-known as global warming or world hunger, is just as much of a threat to humanity. Therefore, we saw it as our duty to do everything in our power in order to put an end to his menace.
 
 ## What does it do?
-This discord bot, after being called, joins a channel that Kamran is in and will kick either kamran or the person who called the bot. This functionality is implemented on purpose, and serves as a reminder that in battle against Kamran, failure is a possibility and one must be always stay vigilant in the face of its danger.
+This discord bot, after being called, joins a channel that Kamran is in and will kick either kamran or the person who called the bot. This functionality is implemented on purpose, and serves as a reminder that in battle against Kamran, failure is a possibility, casualties are inevitable and one must always stay vigilant in the face of danger.
 
 ## Setup
 After cloning the repository, first install the requirements:
