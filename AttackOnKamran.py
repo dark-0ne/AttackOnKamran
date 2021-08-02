@@ -3,12 +3,24 @@ import random
 import discord
 import yaml
 import os
+import logging
 
 from dotenv import load_dotenv
 from pymongo import MongoClient
 
 # Load environment variables from .env file
 load_dotenv()
+
+# Setup logging
+# TODO: different logging levels and formattings for each handler
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    handlers=[
+        logging.FileHandler("info.log"),
+        logging.StreamHandler()
+    ]
+)
 
 # Have to set intents so bot can see users in voice channels
 intents = discord.Intents.default()
@@ -42,6 +54,7 @@ async def find_and_exterminate_kamran(caller) -> bool:
         return False
 
     # Join kamran's channel
+    logging.info("Joining %s",voice_channel.name)
     voice_client: discord.VoiceClient = await voice_channel.connect()
 
     async def kick_and_disconnect() -> None:
@@ -54,17 +67,21 @@ async def find_and_exterminate_kamran(caller) -> bool:
         user_to_kick = voice_channel.guild.get_member(user_to_kick_id)
 
         # Disconnect user (Move to none channel)
+        logging.info("Kicking %s",user_to_kick.name)
         await user_to_kick.edit(voice_channel=None)
 
         # Update database depeding on whether kamran was kicked or not
         if user_to_kick_id == kamran_uid:
+            logging.info("Increasing %s's kills by 1",user_to_kick.name+"#"+user_to_kick.discriminator)
             database.stat.update_one(
                 {"username": caller.name+"#"+caller.discriminator}, {"$inc": {"kills": 1}}, upsert=True)
         else:
+            logging.info("Increasing %s's deaths by 1",user_to_kick.name+"#"+user_to_kick.discriminator)
             database.stat.update_one(
                 {"username": caller.name+"#"+caller.discriminator}, {"$inc": {"deaths": 1}}, upsert=True)
 
         # Leave the channel
+        logging.info("Leaving %s",voice_channel.name)
         await voice_client.disconnect()
 
     def after_play(e):
@@ -76,22 +93,21 @@ async def find_and_exterminate_kamran(caller) -> bool:
 
     # Determine if kamran is getting kicked or not
     random_int = random.randint(0, 101)
-    print("random number is {}".format(random_int))
 
     if random_int <= kamran_kick_chance * 100:
-        print("Should kick kamran")
+        logging.info("%d <= %d ; Should kick Kamran",random_int,kamran_kick_chance * 100)
         user_to_kick_id = kamran_uid
         random_audio_file = random.choice(kick_kamran_audio_files)
         audio_to_play = os.path.join(os.getcwd(), "audio", random_audio_file)
     else:
-        print("Should kick caller")
+        logging.info("%d > %d ; Should kick %s",random_int,kamran_kick_chance * 100, caller.name)
         user_to_kick_id = caller.id
         audio_to_play = os.path.join(
             os.getcwd(), "audio", kick_caller_audio_file)
 
     # Play the audio
     # Runs `after_play` when audio has finished playing
-    print("playing audio: {}".format(audio_to_play))
+    logging.info("Playing audio: %s",audio_to_play)
     voice_client.play(discord.FFmpegPCMAudio(audio_to_play), after=after_play)
     return True
 
@@ -109,11 +125,14 @@ async def celebrate(caller) -> None:
 
     # Retrieve caller channel
     voice_channel = await retrieve_caller_channel(caller)
+
+    logging.info("Joining %s",voice_channel.name)
     voice_client: discord.VoiceClient = await voice_channel.connect()
 
     audio_to_play = os.path.join(os.getcwd(), "audio", celebration_audio_file)
 
     # Play the audio, and disconnect from channel after it's over
+    logging.info("Playing audio: %s",audio_to_play)
     voice_client.play(discord.FFmpegPCMAudio(audio_to_play),
                       after=voice_client.disconnect)
 
@@ -132,8 +151,11 @@ async def retrieve_kamran_channel() -> discord.VoiceChannel:
         if isinstance(channel, discord.VoiceChannel):
             members_in_channel = [user.id for user in channel.members]
             if kamran_uid in members_in_channel:
-                print("Found kamran in channel")
+                logging.info("Found Kamran in %s",channel.name)
                 return channel
+
+
+    logging.info("Kamran not found in any channels")
 
 
 async def retrieve_caller_channel(caller) -> discord.VoiceChannel:
@@ -153,9 +175,10 @@ async def retrieve_caller_channel(caller) -> discord.VoiceChannel:
         if isinstance(channel, discord.VoiceChannel):
             members_in_channel = [user.id for user in channel.members]
             if caller.id in members_in_channel:
-                print("Found caller in channel")
+                logging.info("Found %s in %s",caller.name,channel.name)
                 return channel
 
+    logging.info("%s not found in any channels",caller.name)
 
 async def show_leaderboard(target_channel) -> None:
     """
@@ -169,7 +192,8 @@ async def show_leaderboard(target_channel) -> None:
     """
 
     # Retrieve all user records from database
-    result = database.stat.find()
+    result = list(database.stat.find())
+    logging.info("Retrieved %d records from database",len(result))
 
     total_kills = 0
     total_deaths = 0
@@ -223,6 +247,7 @@ async def show_leaderboard(target_channel) -> None:
             message_to_send += "\t\t-- ***{}: Immortal***\n".format(
                 user.split("#")[0])
 
+    logging.info("Sending leaderboard to %s",target_channel.name)
     await target_channel.send(message_to_send)
 
 
@@ -241,6 +266,10 @@ async def show_stats(user,target_channel)->None:
     # Retrieve user record from database
     result = database.stat.find_one(
         {"username":user.name+"#"+user.discriminator})
+    if result is None:
+        message_to_send = "⠀\nYou have not contributed to exterminating Kamran so far. To get started, send !kamran next time you see him in any channel!"
+        await target_channel.send(message_to_send)
+        return 
 
     # Assign default values if user does not have them
     if "kills" not in result:
@@ -264,28 +293,30 @@ async def show_stats(user,target_channel)->None:
 async def on_message(message):
     if message.channel.name == bot_commands_channel:
         if message.content == "!leaderboard" or message.content == "!leaderboards":
-            print("showing leaderboard")
+            logging.info("%s called show_leaderboard in %s",message.author.name,message.channel.name)
             await show_leaderboard(message.channel)
 
         if message.content == "!stats" or message.content == "!stat":
-            print("showing stats")
+            logging.info("%s called show_stats in %s",message.author.name,message.channel.name)
             await show_stats(message.author,message.channel)
 
         if message.content == "!kamran":
             caller_channel = await retrieve_caller_channel(message.author)
             if caller_channel is None:
+                logging.warning("%s called !kamran but was not in any channel",message.author.name)
                 await message.channel.send("You must be in a voice channel to call me!")
                 return
 
-            print("calling exterminate")
+            logging.info("%s called !kamran in %s",message.author.name,message.channel.name)
             result = await find_and_exterminate_kamran(message.author)
             if not result:
+                logging.info("Kamran was not found in any channels; calling celebrate")
                 await celebrate(message.author)
 
 
 @bot.event
 async def on_ready():
-    print("Connected and logged in. Here I come!")
+    logging.info("Connected and logged in. Here I come!")
 
 # Read the config file and store it in a python dictionary
 with open("config.yaml") as f:
