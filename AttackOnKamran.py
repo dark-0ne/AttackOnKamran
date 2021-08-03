@@ -156,6 +156,7 @@ async def retrieve_caller_channel(caller) -> discord.VoiceChannel:
     Returns:
         channel (discord.VoiceChannel): Channel that kamran is in, will return None if caller not found
     """
+    
     channels = [c for c in bot.get_all_channels()]
 
     for channel in channels:
@@ -211,7 +212,7 @@ async def show_leaderboard(target_channel) -> None:
     top_killers = sorted(user_kd, key=lambda x: user_kd[x][0], reverse=True)
     top_deaths = sorted(user_kd, key=lambda x: user_kd[x][1], reverse=True)
     top_kd = sorted(
-        user_kd, key=lambda x: user_kd[x][0]/(user_kd[x][1]+1), reverse=True)
+        user_kd, key=lambda x: user_kd[x][0]/(user_kd[x][1]+0.001), reverse=True)
 
     # Add top killers to message
     for user in top_killers[:3]:
@@ -276,6 +277,7 @@ async def show_stats(user,target_channel)->None:
 
     await target_channel.send(message_to_send)
 
+
 async def show_quote(target_channel)->None:
     """
     Send a message containing a quote
@@ -297,33 +299,87 @@ async def show_quote(target_channel)->None:
 
     await target_channel.send(message_to_send)
 
+
+async def handle_webhook(token,caller_id) -> None:
+    """
+    Handles incoming webhook
+
+    Will check token sent by webhook, and if it is confirmed, will call find_and_exterminate_kamran with appropriate parameters
+
+    Args:
+        token (str): Token provided by webhook
+
+    Returns:
+        None
+    """
+
+    caller = await bot.fetch_user(caller_id)
+    # Check if token is valid
+    if token not in tokens:
+        logging.warning("User %s tried calling through webhook with invalid token.",caller)
+        await caller.send("You tried calling me through webhook, but your token was invalid. Send !token to receive your token.")
+        return
+
+    caller = await bot.fetch_user(tokens[token])
+    logging.info("User %s called exterminate through webhook.",caller)
+
+
+    caller_channel = await retrieve_caller_channel(caller)
+    if caller_channel is None:
+        logging.warning("%s called !kamran but was not in any channel",message.author.name)
+        await caller.send("You must be in a voice channel to call me!")
+        return
+
+    logging.info("%s called !kamran from webhook",caller)
+    result = await find_and_exterminate_kamran(caller)
+    if not result:
+        logging.info("Kamran was not found in any channels; calling celebrate")
+        await celebrate(caller)
+
+        
+    
 @bot.event
 async def on_message(message):
-    if message.channel.name == bot_commands_channel:
-        if message.content == "!leaderboard" or message.content == "!leaderboards":
-            logging.info("%s called show_leaderboard in %s",message.author.name,message.channel.name)
-            await show_leaderboard(message.channel)
+    # Handle commands
+    if isinstance(message.channel, discord.TextChannel):
+        if message.channel.name == bot_commands_channel:
+            if message.content == "!leaderboard" or message.content == "!leaderboards":
+                logging.info("%s called show_leaderboard in %s",message.author.name,message.channel.name)
+                await show_leaderboard(message.channel)
 
-        if message.content == "!stats" or message.content == "!stat":
-            logging.info("%s called show_stats in %s",message.author.name,message.channel.name)
-            await show_stats(message.author,message.channel)
+            if message.content == "!stats" or message.content == "!stat":
+                logging.info("%s called show_stats in %s",message.author.name,message.channel.name)
+                await show_stats(message.author,message.channel)
 
-        if message.content == "!kamran":
-            caller_channel = await retrieve_caller_channel(message.author)
-            if caller_channel is None:
-                logging.warning("%s called !kamran but was not in any channel",message.author.name)
-                await message.channel.send("You must be in a voice channel to call me!")
-                return
+            if message.content == "!kamran":
+                caller_channel = await retrieve_caller_channel(message.author)
+                if caller_channel is None:
+                    logging.warning("%s called !kamran but was not in any channel",message.author.name)
+                    await message.channel.send("You must be in a voice channel to call me!")
+                    return
 
-            logging.info("%s called !kamran in %s",message.author.name,message.channel.name)
-            result = await find_and_exterminate_kamran(message.author)
-            if not result:
-                logging.info("Kamran was not found in any channels; calling celebrate")
-                await celebrate(message.author)
-        if message.content == "!quote":
-            logging.info("%s called !quote in %s",message.author.name,message.channel.name)
-            await show_quote(message.channel)
+                logging.info("%s called !kamran in %s",message.author.name,message.channel.name)
+                result = await find_and_exterminate_kamran(message.author)
+                if not result:
+                    logging.info("Kamran was not found in any channels; calling celebrate")
+                    await celebrate(message.author)
+            if message.content == "!quote":
+                logging.info("%s called !quote in %s",message.author.name,message.channel.name)
+                await show_quote(message.channel)
 
+            if message.content == "!channels":
+                channels = [c for c in bot.get_all_channels()]
+
+                for channel in channels:
+                    if channel.name == "bot-webook":
+                        print(channel.id)
+                        print(type(channel.id))
+
+
+        # Handle messages send to webhook channel
+        if message.channel.id == 871847839133749359:
+            token, uid = message.content.split("#")
+            await handle_webhook(token, uid)
 
 @bot.event
 async def on_ready():
@@ -359,6 +415,13 @@ bot_commands_channel = config["bot-commands-channel"]
 mongo_address = config["mongo-address"]
 mongo_username = config["mongo-username"]
 mongo_db_name = config["mongo-db-name"]
+
+tokens = {}
+# Read user tokens for webhook
+with open("user_tokens.yaml") as f:
+    user_tokens = yaml.safe_load(f.read())["user-tokens"]
+    for user,token in user_tokens:
+        tokens[token] = user
 
 # Read quotes from csv file
 quotes = []
