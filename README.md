@@ -29,8 +29,8 @@ Parts of this project were either taken directly from or inspired by [anoadragon
 ## Quotes
 In the end, here are some quotes in case you need a bit of encouragement in the eternal struggle against Kamran:
 
-> Three things are infinite: the universe, human stupidity and the effort it takes to put an end to Kamran; and I'm not sure about the first two. __-Albert Einstein__
+> The greatest glory in living lies not in never falling to Kamran, but in rising every time we fall to him. *** -Nelson Mandela***
 
-> Make no mistake; humanity is on the verge of extinction, and the only hope we have lies in Kamran's annihilation. __-Captain Levi__
+> The future belongs to those who believe in the dream of a tomorrow without Kamran. *** -Franklin D. Roosevelt***
 
-> Luftwaffe may bomb our cities to the dust, Kriegsmarine may sink our navy to the depths of the North Sea, Wehrmacht may march into London and we may all be enslaved by the Nazi Empire; but that is still less dreadful a fate than living in a world with Kamran. __-Winston Churchill__
+> Luftwaffe may bomb our cities to the dust, Kriegsmarine may sink our navy to the depths of the North Sea, Wehrmacht may march into London and we may all be enslaved by the Nazi Empire; but that is still less dreadful a fate than living in a world with Kamran. ***-Winston Churchill***
