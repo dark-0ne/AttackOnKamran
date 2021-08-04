@@ -7,6 +7,7 @@ kick_kamran_audio_files:
   - "kamran5.mp3"
   - "kamran6.mp3"
   - "kamran7.mp3"
+  - "kamran8.mp3"
 
 # File names for when caller is kicked
 kick_caller_audio_file: "khande_kiri.mp3"
