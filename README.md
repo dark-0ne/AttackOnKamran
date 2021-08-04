@@ -29,8 +29,8 @@ Parts of this project were either taken directly from or inspired by [anoadragon
 ## Quotes
 In the end, here are some quotes in case you need a bit of encouragement in the eternal struggle against Kamran:
 
-> The greatest glory in living lies not in never falling to Kamran, but in rising every time we fall to him. *** -Nelson Mandela***
+> The greatest glory in living lies not in never falling to Kamran, but in rising every time we fall to him. ___-Nelson Mandela___
 
-> The future belongs to those who believe in the dream of a tomorrow without Kamran. *** -Franklin D. Roosevelt***
+> The future belongs to those who believe in the dream of a tomorrow without Kamran. ___-Franklin D. Roosevelt___
 
-> Luftwaffe may bomb our cities to the dust, Kriegsmarine may sink our navy to the depths of the North Sea, Wehrmacht may march into London and we may all be enslaved by the Nazi Empire; but that is still less dreadful a fate than living in a world with Kamran. ***-Winston Churchill***
+> Luftwaffe may bomb our cities to the dust, Kriegsmarine may sink our navy to the depths of the North Sea, Wehrmacht may march into London and we may all be enslaved by the Nazi Empire; but that is still less dreadful a fate than living in a world with Kamran. ___-Winston Churchill___
