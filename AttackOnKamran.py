@@ -54,11 +54,11 @@ async def find_and_exterminate_kamran(caller) -> bool:
 
         # Update database depeding on whether kamran was kicked or not
         if user_to_kick_id == kamran_uid:
-            logging.info("Increasing %s's kills by 1",user_to_kick.name+"#"+user_to_kick.discriminator)
+            logging.info("Increasing %s's kills by 1",caller)
             database.stat.update_one(
                 {"username": caller.name+"#"+caller.discriminator}, {"$inc": {"kills": 1}}, upsert=True)
         else:
-            logging.info("Increasing %s's deaths by 1",user_to_kick.name+"#"+user_to_kick.discriminator)
+            logging.info("Increasing %s's deaths by 1",caller)
             database.stat.update_one(
                 {"username": caller.name+"#"+caller.discriminator}, {"$inc": {"deaths": 1}}, upsert=True)
 
