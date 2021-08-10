@@ -12,6 +12,7 @@ pictures/
 
 # Config files
 #config.yaml
+user_tokens.yaml
 .env
 
 # Python environments

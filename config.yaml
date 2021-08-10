@@ -7,6 +7,11 @@ kick_kamran_audio_files:
   - "kamran5.mp3"
   - "kamran6.mp3"
   - "kamran7.mp3"
+  - "kamran8.mp3"
+  - "kamran9.mp3"
+  - "kamran10.mp3"
+  - "kamran11.mp3"
+  - "kamran12.mp3"
 
 # File names for when caller is kicked
 kick_caller_audio_file: "khande_kiri.mp3"
@@ -22,3 +27,9 @@ caller_kick_chance_step: 0.085
 
 # Name of the channel bot will listen to commands and send responses
 bot-commands-channel: "bot-commands"
+
+# MongoDB configs
+# Password should be put in .env file
+mongo-address: "localhost"
+mongo-username: "AoKBot"
+mongo-db-name: "AttackOnKamran"
