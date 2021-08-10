@@ -8,6 +8,10 @@ kick_kamran_audio_files:
   - "kamran6.mp3"
   - "kamran7.mp3"
   - "kamran8.mp3"
+  - "kamran9.mp3"
+  - "kamran10.mp3"
+  - "kamran11.mp3"
+  - "kamran12.mp3"
 
 # File names for when caller is kicked
 kick_caller_audio_file: "khande_kiri.mp3"
@@ -19,7 +23,7 @@ celebration_audio_file: "dead.mp3"
 kamran_uid: 336082523010629632
 
 # Chance to kick kamran (between 0 and 1)
-kamran_kick_chance: 0.8
+kamran_kick_chance: 0.85
 
 # Name of the channel bot will listen to commands and send responses
 bot-commands-channel: "bot-commands"
