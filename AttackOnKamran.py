@@ -4,6 +4,7 @@ import discord
 import yaml
 import os
 import logging
+from helpers import PseudoRandomGenerator
 
 from dotenv import load_dotenv
 from pymongo import MongoClient
@@ -92,18 +93,17 @@ async def find_and_exterminate_kamran(caller) -> bool:
             kick_and_disconnect(), bot.loop)
 
     # Determine if kamran is getting kicked or not
-    random_int = random.randint(0, 101)
 
-    if random_int <= kamran_kick_chance * 100:
-        logging.info("%d <= %d ; Should kick Kamran",random_int,kamran_kick_chance * 100)
-        user_to_kick_id = kamran_uid
-        random_audio_file = random.choice(kick_kamran_audio_files)
-        audio_to_play = os.path.join(os.getcwd(), "audio", random_audio_file)
-    else:
-        logging.info("%d > %d ; Should kick %s",random_int,kamran_kick_chance * 100, caller.name)
+    if PRG.get_bool():
+        logging.info("Should kick %s",caller.name)
         user_to_kick_id = caller.id
         audio_to_play = os.path.join(
             os.getcwd(), "audio", kick_caller_audio_file)
+    else:
+        logging.info("Should kick Kamran")
+        user_to_kick_id = kamran_uid
+        random_audio_file = random.choice(kick_kamran_audio_files)
+        audio_to_play = os.path.join(os.getcwd(), "audio", random_audio_file)
 
     # Play the audio
     # Runs `after_play` when audio has finished playing
@@ -333,9 +333,10 @@ kick_caller_audio_file = config["kick_caller_audio_file"]
 celebration_audio_file = config["celebration_audio_file"]
 
 kamran_uid = config["kamran_uid"]
-kamran_kick_chance = config["kamran_kick_chance"]
 
 bot_commands_channel = config["bot-commands-channel"]
+
+PRG = PseudoRandomGenerator(step=config['caller-kick-chance-step'])
 
 # Run the bot with token read from env variable
 bot.run(os.environ.get("KAMRAN_TOKEN"))

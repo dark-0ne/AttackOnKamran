@@ -17,8 +17,8 @@ celebration_audio_file: "dead.mp3"
 # Kamran's unique id
 kamran_uid: 336082523010629632
 
-# Chance to kick kamran (between 0 and 1)
-kamran_kick_chance: 0.8
+# Increase in chance to kick caller each time kamran is kicked (between 0 & 1)
+caller_kick_chance_step: 0.085
 
 # Name of the channel bot will listen to commands and send responses
 bot-commands-channel: "bot-commands"
