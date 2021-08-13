@@ -12,6 +12,6 @@ class PseudoRandomGenerator():
             self.current_chance = self.step
             return True
         else:
-            self.current_chance =+ self.step
+            self.current_chance += self.step
             return False
 

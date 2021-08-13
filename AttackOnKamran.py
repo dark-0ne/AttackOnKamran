@@ -77,6 +77,7 @@ async def find_and_exterminate_kamran(caller) -> bool:
 
     # Determine if kamran is getting kicked or not
 
+    logging.info("Chance to kick kamran: %f",PRG.current_chance)
     if PRG.get_bool():
         logging.info("Should kick %s",caller.name)
         user_to_kick_id = caller.id
@@ -410,13 +411,13 @@ celebration_audio_file = config["celebration_audio_file"]
 
 kamran_uid = config["kamran_uid"]
 
-bot_commands_channel = config["bot-commands-channel"]
+bot_commands_channel = config["bot_commands_channel"]
 
-PRG = PseudoRandomGenerator(step=config['caller-kick-chance-step'])
+PRG = PseudoRandomGenerator(step=config['caller_kick_chance_step'])
 
-mongo_address = config["mongo-address"]
-mongo_username = config["mongo-username"]
-mongo_db_name = config["mongo-db-name"]
+mongo_address = config["mongo_address"]
+mongo_username = config["mongo_username"]
+mongo_db_name = config["mongo_db_name"]
 
 tokens = {}
 # Read user tokens for webhook

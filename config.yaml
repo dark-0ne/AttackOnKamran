@@ -23,13 +23,13 @@ celebration_audio_file: "dead.mp3"
 kamran_uid: 336082523010629632
 
 # Increase in chance to kick caller each time kamran is kicked (between 0 & 1)
-caller_kick_chance_step: 0.085
+caller_kick_chance_step: 0.10
 
 # Name of the channel bot will listen to commands and send responses
-bot-commands-channel: "bot-commands"
+bot_commands_channel: "bot-commands"
 
 # MongoDB configs
 # Password should be put in .env file
-mongo-address: "localhost"
-mongo-username: "AoKBot"
-mongo-db-name: "AttackOnKamran"
+mongo_address: "localhost"
+mongo_username: "AoKBot"
+mongo_db_name: "AttackOnKamran"

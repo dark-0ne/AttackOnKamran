@@ -19,13 +19,18 @@ user_tokens.yaml
 env/
 venv/
 
-# Audio filetypes
+# Audio files
 *.ogg
 *.opus
 *.wav
+audio/ramin.mp3
 
 # Log files
 *.log
 
 # Test File
 test.py
+
+# Python Cache Folder
+__pycache__
+
