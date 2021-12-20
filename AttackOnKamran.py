@@ -87,6 +87,7 @@ async def find_and_exterminate_kamran(caller) -> bool:
         logging.info("Should kick Kamran")
         user_to_kick_id = kamran_uid
         random_audio_file = random.choice(kick_kamran_audio_files)
+        #random_audio_file = kick_kamran_audio_files[-1]
         audio_to_play = os.path.join(os.getcwd(), "audio", random_audio_file)
 
     # Play the audio
