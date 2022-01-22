@@ -81,8 +81,15 @@ async def find_and_exterminate_kamran(caller) -> bool:
     if PRG.get_bool():
         logging.info("Should kick %s",caller.name)
         user_to_kick_id = caller.id
-        audio_to_play = os.path.join(
-            os.getcwd(), "audio", kick_caller_audio_file)
+        
+        # Check Hassan's ID
+        audio_to_play = ""
+        if user_to_kick_id == "533334954952753153":
+            audio_to_play = os.path.join(
+                os.getcwd(), "audio", kick_hassan_audio_file)
+        else:
+            audio_to_play = os.path.join(
+                os.getcwd(), "audio", kick_caller_audio_file)
     else:
         logging.info("Should kick Kamran")
         user_to_kick_id = kamran_uid
@@ -408,6 +415,7 @@ with open("config.yaml") as f:
 
 kick_kamran_audio_files = config["kick_kamran_audio_files"]
 kick_caller_audio_file = config["kick_caller_audio_file"]
+kick_hassan_audio_file = config["kick_hassan_audio_file"]
 celebration_audio_file = config["celebration_audio_file"]
 
 kamran_uid = config["kamran_uid"]
