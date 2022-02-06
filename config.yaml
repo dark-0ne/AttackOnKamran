@@ -6,20 +6,26 @@ kick_kamran_audio_files:
   - "kamran_self4.mp3"
   - "kamran_self5.mp3"
   - "kamran_self6.mp3"
-#  - "kamran7.mp3"
-#  - "kamran8.mp3"
-#  - "kamran9.mp3"
-#  - "kamran10.mp3"
-#  - "kamran11.mp3"
-#  - "kamran12.mp3"
-#  - "kamran13.mp3"
+  - "kamran1.mp3"
+  - "kamran2.mp3"
+  - "kamran3.mp3"
+  - "kamran4.mp3"
+  - "kamran5.mp3"
+  - "kamran6.mp3"
+  - "kamran7.mp3"
+  - "kamran8.mp3"
+  - "kamran9.mp3"
+  - "kamran10.mp3"
+  - "kamran11.mp3"
+  - "kamran12.mp3"
+  - "kamran13.mp3"
 
 # File names for when caller is kicked
 kick_caller_audio_file: "kamran_ayyah.mp3"
 kick_hassan_audio_file: "kamran_hassan3.mp3"
 
 # File names for when kamran is not in channel
-celebration_audio_file: "dead.mp3"
+celebration_audio_file: "kamran_mord.mp3"
 
 # Kamran's unique id
 kamran_uid: 336082523010629632

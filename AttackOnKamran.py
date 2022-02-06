@@ -84,7 +84,7 @@ async def find_and_exterminate_kamran(caller) -> bool:
         
         # Check Hassan's ID
         audio_to_play = ""
-        if user_to_kick_id == "533334954952753153":
+        if user_to_kick_id == 533334954952753153:
             audio_to_play = os.path.join(
                 os.getcwd(), "audio", kick_hassan_audio_file)
         else:
